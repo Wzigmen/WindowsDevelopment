@@ -4,7 +4,7 @@
 #include<Windows.h>
 #include"resource.h"
 
-CONST CHAR* g_combo_box_items[] = { "This", "is", "my", "First", "Combo", "Box" };
+CONST CHAR* g_combo_box_items[] = { "This", "is", "my", "First", "Combo", "Box", "Привет" };
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -40,13 +40,13 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			CONST INT SIZE = 256;
 			CHAR sz_buffer[SIZE]{};
 			SendMessage(hCombo, CB_GETLBTEXT, i, (LPARAM)sz_buffer);
-			MessageBox(hwnd, sz_buffer, "info", MB_OK | MB_ICONASTERISK);
 
 			CHAR sz_message[SIZE]{};
 			sprintf(sz_message, "Вы выбрали №%i со значением %s", i, sz_buffer);
 				// Функция sprintf выполняет форматирование строк, позволяет вставить в троку переменные значения 
 				// Cпецификатор %i - целое число
 				// Спецификатор %s - строка
+			MessageBox(hwnd, sz_message, "info", MB_OK | MB_ICONASTERISK);
 		}
 			break;
 		case IDCANCEL:	EndDialog(hwnd, 0);
