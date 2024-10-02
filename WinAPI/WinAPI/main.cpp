@@ -1,7 +1,10 @@
-﻿#include <Windows.h>
+﻿
+#include <Windows.h>
+#include <cstdio>
 #include "resource.h"
 
-CONST CHAR g_sz_LOGIN_INVITATION[] = "Введите имя пробабушки";
+CONST CHAR g_sz_LOGIN_INVITATION[] = "Введите имя";
+CONST CHAR* g_combo_box_items[] = { "This", "is", "my", "First", "Combo", "Box" };
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -49,6 +52,12 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
 		SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)g_sz_LOGIN_INVITATION); // (LPARAM)g_sz_LOGIN_INVITATION
+		HWND hCombo = GetDlgItem(hwnd, IDC_COMBO);
+		for (int i = 0; i < sizeof(g_combo_box_items) / sizeof(g_combo_box_items[0]); i++)
+		{
+			SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)g_combo_box_items[i]);
+		}
+		SendMessage(hCombo, CB_SETCURSEL, 0, 0);
 	} break;
 	case WM_COMMAND:	// Обрабатывает нажатие кнопок и другие действия пользователя
 		switch (LOWORD(wParam))
