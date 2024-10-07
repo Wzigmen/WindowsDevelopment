@@ -8,6 +8,7 @@ CONST CHAR* g_LIST_BOX_ITEMS[] = { "This", "is", "my", "First", "Combo", "Box" }
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DlgProcAdd(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK DlgProcChange(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR IpCmdLine, INT nCmdShow) 
 {
@@ -31,6 +32,16 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND: 
 		switch (LOWORD(wParam))
 		{
+		case IDC_LIST1: {
+			if (HIWORD(wParam) == LBN_DBLCLK) {
+				//CONST INT SIZE = 256;
+				//CHAR sz_buffer[SIZE];
+				//INT i = SendMessage((HWND)lParam, LB_GETCURSEL, 0, 0);
+				//SendMessage((HWND)lParam, LB_GETTEXT, SIZE, (LPARAM)sz_buffer);
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ADD_ITEM), hwnd, (DLGPROC)DlgProcChange, 0);
+			}
+		}
+			break;
 		case IDC_BUTTON_ADD: {
 			//GetModuleHandle(NULL); возвращает hInstance запущает программы
 			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ADD_ITEM), hwnd, (DLGPROC)DlgProcAdd, 0);
@@ -64,7 +75,9 @@ BOOL CALLBACK DlgProcAdd(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
-	case WM_INITDIALOG:
+	case WM_INITDIALOG: {
+		/*SetFocus(GetDlgItem)*/
+	}
 		break;
 	case WM_COMMAND: {
 		switch (LOWORD(wParam))
@@ -88,6 +101,60 @@ BOOL CALLBACK DlgProcAdd(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:
 		EndDialog(hwnd, 0);
 		break;
+	}
+	return FALSE;
+}
+BOOL CALLBACK DlgProcChange(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{
+	switch (uMsg)
+	{
+		case WM_INITDIALOG:
+		{
+			SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)"Изменить");
+			SendMessage(GetDlgItem(hwnd, IDOK), WM_SETTEXT, 0, (LPARAM)"Coхранить");
+
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE];
+			HWND hParent = GetParent(hwnd);
+			HWND hListBox = GetDlgItem(hParent, IDC_LIST1);
+			HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_NAME);
+			INT i = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+			SendMessage(hListBox, LB_GETTEXT, i, (LPARAM)sz_buffer);
+			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			SendMessage(hEdit, EM_SETSEL, 0, SendMessage(hEdit, WM_GETTEXTLENGTH, 0, 0));
+			SetFocus(GetDlgItem(hwnd, IDC_EDIT_NAME));
+		}
+			break;
+		case WM_COMMAND: {
+			switch (LOWORD(wParam))
+			{
+			case IDOK: {
+				HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_NAME);
+				HWND hParent = GetParent(hwnd);
+				HWND hListBox = GetDlgItem(hParent, IDC_LIST1);
+				CONST INT SIZE = 256;
+				CHAR sz_buffer[SIZE];
+				SendMessage(hEdit, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+				INT i = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+				//SendMessage(hListBox, LB_SETITEMDATA, i, (LPARAM)sz_buffer);
+				if (SendMessage(hListBox,LB_FINDSTRING, -1, (LPARAM)sz_buffer)==LB_ERR)
+				{
+					SendMessage(hListBox, LB_DELETESTRING, i, 0);
+					SendMessage(hListBox, LB_INSERTSTRING, i, (LPARAM)sz_buffer);
+					EndDialog(hwnd, 0);
+				}
+				else 
+				{
+					MessageBox(hwnd, "Такое значение уже есть в списке", "Info", MB_OK | MB_ICONINFORMATION);
+				}
+			}
+				break;
+			case IDCANCEL: EndDialog(hwnd, 0);
+			}
+		}
+			break;
+		case WM_CLOSE:
+			EndDialog(hwnd, 0);
 	}
 	return FALSE;
 }
