@@ -1,0 +1,10 @@
+Crystal Cursors by plinderstam (coroners)
+-----------------------------------------
+
+How to install:
+
+Right click "_install.inf" inside the Dark or Light
+folder and click "Install" navigate to Mouse Propterties (Windows)
+
+Under Pointers choose either Cystal Cursors (Light or Dark)
+scheme and then hit OK
