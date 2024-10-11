@@ -8,6 +8,7 @@ CONST CHAR* g_LIST_BOX_ITEMS[] = { "This", "is", "my", "First", "Combo", "Box" }
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DlgProcAdd(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK DlgProcDelete(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DlgProcChange(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR IpCmdLine, INT nCmdShow) 
@@ -45,6 +46,19 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_BUTTON_ADD: {
 			//GetModuleHandle(NULL); возвращает hInstance запущает программы
 			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ADD_ITEM), hwnd, (DLGPROC)DlgProcAdd, 0);
+		}
+			break;
+		case IDC_BUTTON_DELETE: {
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE]{};
+			CHAR sz_message[SIZE]{ "Вы ничего не выбрали" };
+			HWND hCombo = GetDlgItem(hwnd, IDC_LIST1);
+			INT i = SendMessage(hCombo, LB_GETCURSEL, 0, 0);
+			SendMessage(hCombo, LB_GETTEXT, i, (LPARAM)sz_buffer);
+			HWND hListBox = GetDlgItem(hwnd, IDC_LIST1);
+			SendMessage(hListBox, LB_DELETESTRING, i, 0);
+			if (i == LB_ERR)
+				MessageBox(hwnd, sz_message, "Info", MB_OK | MB_ICONINFORMATION);
 		}
 			break;
 		case IDOK: {
@@ -98,6 +112,23 @@ BOOL CALLBACK DlgProcAdd(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			EndDialog(hwnd, 0);
 		}
 	} break;
+	case WM_CLOSE:
+		EndDialog(hwnd, 0);
+		break;
+	}
+	return FALSE;
+}
+BOOL CALLBACK DlgProcDelete(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{
+	switch (uMsg)
+	{
+	case WM_INITDIALOG: 
+		break;
+	case WM_COMMAND: {
+		INT i = SendMessage(hwnd, LB_GETCURSEL, 0, 0);
+		SendMessage(hwnd, LB_DELETESTRING, i, 0);
+	}
+		break;
 	case WM_CLOSE:
 		EndDialog(hwnd, 0);
 		break;

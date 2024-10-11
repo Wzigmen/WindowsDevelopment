@@ -120,6 +120,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+		//SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)"dsa");
 	}
 		break;
 	case WM_COMMAND: {
